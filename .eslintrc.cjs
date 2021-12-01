@@ -22,6 +22,8 @@ module.exports = {
     'no-use-before-define': 'off',
     'no-restricted-syntax': 'off',
     'brace-style': 'off',
+    'arrow-body-style': 'off',
+    'no-unused-vars': ['error', { 'args': 'none' }],
     'semi': ['error', 'never'],
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'import/extensions': ['error', 'always',
