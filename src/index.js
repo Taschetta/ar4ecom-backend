@@ -1,6 +1,9 @@
 import { useApp } from '@packages/router'
 
+import sesion from './sesion/index.js'
+
 export default useApp({
+  '/sesion': sesion,
   '/': {
     get: () => {
       return {
@@ -13,6 +16,7 @@ export default useApp({
   errorHandler: (error, req, res, next) => {
     switch (error.name) {
       default:
+        console.log(error)
         res.status(500).send({ success: false, message: 'Error interno' })
         break
     }
