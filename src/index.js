@@ -15,6 +15,12 @@ export default useApp({
 }, {
   errorHandler: (error, req, res, next) => {
     switch (error.name) {
+      case 'BadRequestError':
+        res.status(400).send({ success: false, message: error.message })
+        break
+      case 'UnauthorizedError':
+        res.status(401).send({ success: false, message: error.message })
+        break
       default:
         console.log(error)
         res.status(500).send({ success: false, message: 'Error interno' })

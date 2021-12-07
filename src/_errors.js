@@ -1,7 +1,7 @@
 
 export class BadRequestError extends Error {
   constructor(message) {
-    super(`Los datos provistos son invalidos: ${message}`)
+    super(message)
     this.name = 'BadRequestError'
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, BadRequestError)
@@ -11,7 +11,7 @@ export class BadRequestError extends Error {
 
 export class UnauthorizedError extends Error {
   constructor(message) {
-    super(`No se pudo autenticar tu pedido: ${message}`)
+    super(message)
     this.name = 'UnauthorizedError'
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, UnauthorizedError)
