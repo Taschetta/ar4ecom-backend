@@ -3,8 +3,8 @@ import { useRouter } from '@packages/router'
 
 export default ({ endpoint }) => useRouter({
   '/': {
-    post: endpoint.login,
-    patch: endpoint.refresh,
-    delete: [ admin, endpoint.logout ],
+    get: [ admin, endpoint.find ],
+    patch: [ admin, endpoint.update ],
+    post: endpoint.insert,
   },
 })

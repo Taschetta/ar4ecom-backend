@@ -45,7 +45,7 @@ CREATE TABLE usuario
 	nombre VARCHAR(100) NOT NULL,
 	email VARCHAR(100) NOT NULL,
 	contraseña VARCHAR(255) NOT NULL,
-	activo BIT NOT NULL DEFAULT 1,
+	activo TINYINT(1) NOT NULL DEFAULT 1,
 	PRIMARY KEY (id),
 	UNIQUE UQ_Usuario_email(email),
 	UNIQUE UQ_Usuario_nombre(nombre)
