@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 export default ({ $hash, $table }) => ({
 
   async find(request) {
@@ -24,12 +24,12 @@ export default ({ $hash, $table }) => ({
   async update(request) {
     const { id, ...item } = request.body
 
-    if(item.contraseña) {
+    if (item.contraseña) {
       item.contraseña = await $hash.make(item.contraseña)
     }
 
     await $table.updateOne({ id }, item)
-    
+
     return $table.findOne({ id })
   },
 
