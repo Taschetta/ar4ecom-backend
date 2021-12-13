@@ -1,9 +1,11 @@
 import { useApp } from '@packages/router'
 
 import sesion from './sesion/index.js'
+import usuarios from './usuarios/index.js'
 
 export default useApp({
   '/sesion': sesion,
+  '/usuarios': usuarios,
   '/': {
     get: () => {
       return {

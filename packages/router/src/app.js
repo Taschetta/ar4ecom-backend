@@ -12,9 +12,9 @@ export default ({ express, handler }) => (routes = {}, { errorHandler } = {}) =>
   Object
     .entries(routes)
     .forEach(([route, value]) => {
-      return (value.name === 'router')
-        ? app.use(route, value)
-        : addMethods(route, value)
+      return (value.name === undefined)
+        ? addMethods(route, value)
+        : app.use(route, value)
     })
 
   app.all('*', (req, res) => {
@@ -28,10 +28,14 @@ export default ({ express, handler }) => (routes = {}, { errorHandler } = {}) =>
   return app
 
   function cors(req, res, next) {
-    res.header('Access-Control-Allow-Origin', process.env.APP_URL_FRONTEND)
-    res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method')
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-    res.header('Allow', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+    const origins = process.env.APP_ALLOW_ORIGINS.split(',')
+    if (origins.indexOf(req.headers.origin) !== -1) {
+      res.header('Access-Control-Allow-Origin', req.headers.origin)
+      res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method')
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+      res.header('Allow', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+    }
+
     next()
   }
 
