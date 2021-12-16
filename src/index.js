@@ -1,9 +1,11 @@
 import { useApp } from '@packages/router'
 
+import publicaciones from './publicaciones/index.js'
 import sesion from './sesion/index.js'
 import usuario from './usuario/index.js'
 
 export default useApp({
+  '/publicaciones': publicaciones,
   '/sesion': sesion,
   '/usuario': usuario,
   '/': {
@@ -21,6 +23,7 @@ export default useApp({
         res.status(400).send({ success: false, message: error.message })
         break
       case 'UnauthorizedError':
+      case 'AuthenticationFailedError:':
         res.status(401).send({ success: false, message: error.message })
         break
       default:
