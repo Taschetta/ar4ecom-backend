@@ -51,11 +51,20 @@ export default ({ $publicaciones, $usuarios, $images }) => ({
       throw new Error('No se encontró la publicación')
     }
 
-    // else => load images for the item from /files/publicaciones/:id folder
+    // load images for the item from /files/publicaciones/:id folder
 
     item.imagenes = $images.findMany(`publicaciones/${item.id}/imagenes`)
 
-    // then => return the item
+    // load item's user
+
+    const usuario = await $usuarios.findOne({ id: item.fkUsuario })
+    item.usuario = usuario.nombre
+
+    // parse the prePublicacion field
+
+    item.prePublicacion = JSON.parse(item.prePublicacion)
+
+    // return the item
 
     return item
   },
