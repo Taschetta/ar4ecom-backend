@@ -1,13 +1,13 @@
+import express from 'express'
 import { useApp } from '@packages/router'
 
-import publicaciones from './publicaciones/index.js'
 import sesion from './sesion/index.js'
 import usuario from './usuario/index.js'
 
 export default useApp({
-  '/publicaciones': publicaciones,
   '/sesion': sesion,
   '/usuario': usuario,
+  '/files': express.static('files'),
   '/': {
     get: () => {
       return {

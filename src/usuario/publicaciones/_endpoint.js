@@ -13,13 +13,11 @@ export default ({ $publicaciones, $images }) => ({
     const id = request.params.id
     const fkUsuario = request.auth.payload.id
 
-    let item = await $publicaciones.findOne({
-      id,
-      $or: [
-        { fkUsuario },
-        { privado: false },
-      ],
-    })
+    let item = await $publicaciones.findOne({ id, fkUsuario })
+
+    if (item) {
+      item.imagenes = $images.findMany(`publicaciones/${item.id}/imagenes`)
+    }
 
     if (!item) {
       item = {
@@ -34,32 +32,32 @@ export default ({ $publicaciones, $images }) => ({
   },
 
   async insert(request) {
-    let publicacion
+    let item
 
-    publicacion = request.body
-    publicacion.fkUsuario = request.auth.payload.id
-    publicacion.fechaActualizado = new Date(Date.now())
+    item = request.body
+    item.fkUsuario = request.auth.payload.id
+    item.fechaActualizado = new Date(Date.now())
 
-    publicacion.prePublicacion = JSON.parse(fs.readFileSync(request.files.prePublicacion[0].path))
-    publicacion.prePublicacion.titulo = publicacion.titulo
-    publicacion.prePublicacion.descripcion = publicacion.descripcion
-    publicacion.prePublicacion = JSON.stringify(publicacion.prePublicacion)
+    item.prePublicacion = JSON.parse(fs.readFileSync(request.files.prePublicacion[0].path))
+    item.prePublicacion.titulo = item.titulo
+    item.prePublicacion.descripcion = item.descripcion
+    item.prePublicacion = JSON.stringify(item.prePublicacion)
 
-    publicacion.id = await $publicaciones.insertOne(publicacion)
-    publicacion = await $publicaciones.findOne({ id: publicacion.id })
+    item.id = await $publicaciones.insertOne(item)
+    item = await $publicaciones.findOne({ id: item.id })
 
-    fs.mkdirSync(`files/publicaciones/${publicacion.id}`)
+    fs.mkdirSync(`files/publicaciones/${item.id}`)
 
     if (request.files.imagenes) {
-      $images.insertMany(`publicaciones/${publicacion.id}/imagenes`, request.files.imagenes)
+      $images.insertMany(`publicaciones/${item.id}/imagenes`, request.files.imagenes)
     }
 
-    fs.renameSync(request.files.bundleAndroid[0].path, `files/publicaciones/${publicacion.id}/${publicacion.id}_android`)
-    fs.renameSync(request.files.bundleIOS[0].path, `files/publicaciones/${publicacion.id}/${publicacion.id}_ios`)
+    fs.renameSync(request.files.bundleAndroid[0].path, `files/publicaciones/${item.id}/${item.id}_android`)
+    fs.renameSync(request.files.bundleIOS[0].path, `files/publicaciones/${item.id}/${item.id}_ios`)
 
     fs.unlinkSync(request.files.prePublicacion[0].path)
 
-    return publicacion
+    return item
   },
 
   async update(request) {
@@ -104,8 +102,6 @@ export default ({ $publicaciones, $images }) => ({
 
     // Parse, override titulo and descripcion, and stringify again
 
-    console.log(update)
-
     publicacion.prePublicacion = JSON.parse(publicacion.prePublicacion)
     publicacion.prePublicacion.titulo = publicacion.titulo
     publicacion.prePublicacion.descripcion = publicacion.descripcion
@@ -118,6 +114,13 @@ export default ({ $publicaciones, $images }) => ({
     // Update the item
 
     await $publicaciones.updateOne({ id, fkUsuario }, publicacion)
+
+    // if the item had images saved
+
+    if (update.imagenesGuardadas) {
+      const imagenes = update.imagenesGuardadas.map((image) => image.split('/').pop())
+      $images.removeNotIn(`publicaciones/${publicacion.id}/imagenes`, imagenes)
+    }
 
     // if images are set on the request, save them
 
@@ -147,7 +150,20 @@ export default ({ $publicaciones, $images }) => ({
   async remove(request) {
     const id = request.params.id
     const fkUsuario = request.auth.payload.id
-    return $publicaciones.removeOne({ id, fkUsuario })
+
+    // Remove from database
+
+    const result = await $publicaciones.removeOne({ id, fkUsuario })
+
+    // Remove files
+
+    const path = `files/publicaciones/${id}`
+
+    if (fs.existsSync(path)) {
+      fs.rmSync(path, { recursive: true })
+    }
+
+    return result
   },
 
 })
