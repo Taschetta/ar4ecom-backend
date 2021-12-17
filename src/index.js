@@ -25,7 +25,7 @@ export default useApp({
         res.status(400).send({ success: false, message: error.message })
         break
       case 'UnauthorizedError':
-      case 'AuthenticationFailedError:':
+      case 'AuthenticationFailedError':
         res.status(401).send({ success: false, message: error.message })
         break
       default:

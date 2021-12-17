@@ -36,5 +36,6 @@ module.exports = {
     'no-multi-spaces': 'off',
     'array-bracket-spacing': 'off',
     'prefer-const': 'off',
+    'camelcase': 'off',
   },
 }
