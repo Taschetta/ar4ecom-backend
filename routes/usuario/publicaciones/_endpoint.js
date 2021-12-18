@@ -53,10 +53,10 @@ export default ({ $publicaciones }) => ({
 
     const update = request.body
 
-    update.prePublicacion = request.files.prePublicacion?.[0]
-    update.bundleAndroid = request.files.bundleAndroid?.[0]
-    update.bundleIOS = request.files.bundleIOS?.[0]
-    update.imagenes = request.files.imagenes
+    update.prePublicacion = request.files?.prePublicacion?.[0]
+    update.bundleAndroid = request.files?.bundleAndroid?.[0]
+    update.bundleIOS = request.files?.bundleIOS?.[0]
+    update.imagenes = request.files?.imagenes
 
     await $publicaciones.updateOne(query, update)
 

@@ -1,4 +1,4 @@
-import { $usuarios } from '@app/entities'
+import { $usuarios } from '@app/resources'
 
 import useEndpoint from './_endpoint.js'
 import useRouter from './_router.js'

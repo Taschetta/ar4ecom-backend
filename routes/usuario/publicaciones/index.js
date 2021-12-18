@@ -1,4 +1,4 @@
-import { $publicaciones } from '@app/entities'
+import { $publicaciones } from '@app/resources'
 
 import { images as $images } from '@packages/files'
 

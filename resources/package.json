@@ -1,5 +1,5 @@
 {
-  "name": "@app/entities",
+  "name": "@app/resources",
   "main": "index.js",
   "type": "module"
 }
