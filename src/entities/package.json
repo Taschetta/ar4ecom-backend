@@ -1,0 +1,5 @@
+{
+  "name": "@app/entities",
+  "main": "index.js",
+  "type": "module"
+}
