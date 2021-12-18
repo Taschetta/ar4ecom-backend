@@ -1,5 +1,5 @@
 
-export default ({ $publicaciones, $usuarios, $images }) => ({
+export default ({ $publicaciones }) => ({
 
   async findMany() {
     return $publicaciones.findMany({ privado: 0 })
