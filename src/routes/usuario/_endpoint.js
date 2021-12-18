@@ -3,15 +3,7 @@ export default ({ $usuarios }) => ({
 
   async findOne(request) {
     // Request data
-    const id = parseInt(request.params.id)
-    const auth = parseInt(request.auth.payload.id)
-
-    // Auth
-
-    if (auth !== id) {
-      throw new Error('No tenes permisos para ver los datos de este usuario')
-    }
-
+    const id = parseInt(request.auth.payload.id)
     // Find
     return $usuarios.findOne({ id })
   },
@@ -32,14 +24,8 @@ export default ({ $usuarios }) => ({
 
   async update(request) {
     // Request data
-    const id = parseInt(request.params.id)
-    const auth = parseInt(request.auth.payload.id)
+    const id = parseInt(request.auth.payload.id)
     const update = request.body
-
-    // Auth
-    if (auth !== id) {
-      throw new Error('No tenes permisos para acceder a este recurso')
-    }
 
     // Update
     // ($updateOne returns true or false depending on if any item was updated)

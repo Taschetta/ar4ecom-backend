@@ -5,4 +5,4 @@ import useUsuarios from './controller.js'
 
 const $table = useTable('usuario')
 
-export default useUsuarios({ $table, $hash })
+export default () => useUsuarios({ $table, $hash })

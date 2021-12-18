@@ -1,14 +1,14 @@
-import express from 'express'
 import { useApp } from '@packages/router'
+import express from 'express'
 
 import publicaciones from './publicaciones/index.js'
 import sesion from './sesion/index.js'
-import usuarios from './usuarios/index.js'
+import usuario from './usuario/index.js'
 
 export default useApp({
   '/publicaciones': publicaciones,
   '/sesion': sesion,
-  '/usuarios': usuarios,
+  '/usuario': usuario,
   '/files': express.static('files'),
   '/': {
     get: () => {
@@ -29,6 +29,7 @@ export default useApp({
         res.status(401).send({ success: false, message: error.message })
         break
       default:
+        console.log(error)
         res.status(500).send({ success: false, message: error.message || 'Error interno' })
         break
     }
