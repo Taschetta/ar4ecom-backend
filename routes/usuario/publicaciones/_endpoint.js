@@ -26,11 +26,7 @@ export default ({ $publicaciones }) => ({
     }
 
     // Find item
-    let item = await $publicaciones.findOne({ id, fkUsuario })
-
-    item.etiquetas = JSON.parse(item.etiquetas)
-
-    return item
+    return $publicaciones.findOne({ id, fkUsuario })
   },
 
   async insert(request) {
@@ -55,10 +51,18 @@ export default ({ $publicaciones }) => ({
 
     const update = request.body
 
-    update.prePublicacion = request.files?.prePublicacion?.[0]
-    update.bundleAndroid = request.files?.bundleAndroid?.[0]
-    update.bundleIOS = request.files?.bundleIOS?.[0]
-    update.imagenes = request.files?.imagenes
+    if (request.files?.prePublicacion?.[0]) {
+      update.prePublicacion = request.files?.prePublicacion?.[0]
+    }
+    if (request.files?.bundleAndroid?.[0]) {
+      update.bundleAndroid = request.files?.bundleAndroid?.[0]
+    }
+    if (request.files?.bundleIOS?.[0]) {
+      update.bundleIOS = request.files?.bundleIOS?.[0]
+    }
+    if (request.files?.imagenes) {
+      update.imagenes = request.files?.imagenes
+    }
 
     await $publicaciones.updateOne(query, update)
 

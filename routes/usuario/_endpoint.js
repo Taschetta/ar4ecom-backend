@@ -1,7 +1,7 @@
 
 export default ({ $usuarios }) => ({
 
-  async findOne(request) {
+  async find(request) {
     // Request data
     const id = parseInt(request.auth.payload.id)
     // Find

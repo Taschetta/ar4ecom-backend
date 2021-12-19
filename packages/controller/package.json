@@ -1,0 +1,11 @@
+{
+  "name": "@packages/controller",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "main": "node -r dotenv/config index.js"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0"
+  }
+}

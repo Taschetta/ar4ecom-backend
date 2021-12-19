@@ -3,6 +3,6 @@ import useHash from './src/hash.js'
 
 const rounds = process.env.HASH_ROUNDS
 
-const hash = useHash({ bcrypt }, { rounds })
+export const hash = useHash({ bcrypt }, { rounds })
 
 export default hash

@@ -7,11 +7,9 @@ import suscripciones from './suscripciones/index.js'
 export default ({ endpoint }) => useRouter({
   '/publicaciones': publicaciones,
   '/suscripciones': suscripciones,
-  '/:id': {
-    get: [ admin, endpoint.findOne ],
-    patch: [ admin, endpoint.update ],
-  },
   '/': {
+    patch: [ admin, endpoint.update ],
+    get: [ admin, endpoint.find ],
     post: endpoint.insert,
   },
 })
