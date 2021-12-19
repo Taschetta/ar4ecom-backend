@@ -1,5 +1,5 @@
 
-export const useImagenes = ({ images, fs }) => ({
+export const useImagenes = ({ images }) => ({
 
   findMany({ fkPublicacion }) {
     return images.findMany(`publicaciones/${fkPublicacion}/imagenes`)
