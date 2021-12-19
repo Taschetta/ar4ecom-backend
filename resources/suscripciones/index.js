@@ -3,4 +3,4 @@ import useSuscripciones from './controller.js'
 
 const $table = useTable('suscripcion')
 
-export default ({ $publicaciones }) => useSuscripciones({ $table, $publicaciones })
+export default ({ $publicaciones, $usuarios }) => useSuscripciones({ $table, $publicaciones, $usuarios })

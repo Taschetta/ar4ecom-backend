@@ -1,16 +1,23 @@
 
-export default ({ $table, $publicaciones }) => ({
+export default ({ $table, $publicaciones, $usuarios }) => ({
 
   async findMany(query) {
     // Data
+
     let items
+
     // Action
+
     items = await $table.findMany(query)
+
     // Format
+
     items = items.map(async (item) => {
       item.publicacion = await $publicaciones.findOne({ id: item.fkPublicacion })
+      item.usuario = await $usuarios.findOne({ id: item.fkUsuario })
       return item
     })
+
     items = await Promise.all(items)
 
     return items
@@ -24,13 +31,12 @@ export default ({ $table, $publicaciones }) => ({
     }
 
     item.publicacion = await $publicaciones.findOne({ id: item.fkPublicacion })
+    item.usuario = await $usuarios.findOne({ id: item.fkUsuario })
 
     return item
   },
 
   async insertOne({ fkUsuario, fkPublicacion, info, etiqueta_url, url_suscriptor }) {
-    // Validation
-
     // Auth
 
     const publicacion = await $publicaciones.findOne({ id: fkPublicacion, privado: 0 })
