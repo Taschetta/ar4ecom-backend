@@ -96,8 +96,7 @@ export const usePublicaciones = ({ $table, $imagenes, $usuarios, images }) => ({
 
     prePublicacion.titulo = titulo
     prePublicacion.descripcion = descripcion
-
-    prePublicacion = JSON.stringify(prePublicacion)
+    prePublicacion.etiquetas = etiquetas
 
     // set publicacion to insert
 
@@ -105,21 +104,23 @@ export const usePublicaciones = ({ $table, $imagenes, $usuarios, images }) => ({
       fkUsuario,
       titulo,
       descripcion,
-      etiquetas,
+      etiquetas: JSON.stringify(etiquetas),
+      prePublicacion: JSON.stringify(prePublicacion),
       fechaActualizado: new Date(Date.now()),
-      prePublicacion,
     }
 
     // insert
 
     const id = await $table.insertOne(publicacion)
 
-    if (imagenes) {
-      $imagenes.insertMany(imagenes, { fkPublicacion: id })
-    }
+    fs.mkdirSync(`files/publicaciones/${id}`)
 
     fs.renameSync(bundleAndroid.path, `files/publicaciones/${id}/${id}_android`)
     fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
+
+    if (imagenes) {
+      $imagenes.insertMany(imagenes, { fkPublicacion: id })
+    }
 
     return id
   },
@@ -161,7 +162,8 @@ export const usePublicaciones = ({ $table, $imagenes, $usuarios, images }) => ({
     }
 
     if (etiquetas) {
-      update.etiquetas = etiquetas
+      update.etiquetas = JSON.stringify(etiquetas)
+      update.prePublicacion.etiquetas = etiquetas
     }
 
     update.prePublicacion = JSON.stringify(update.prePublicacion)

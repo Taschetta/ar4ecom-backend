@@ -28,6 +28,8 @@ export default ({ $publicaciones }) => ({
     // Find item
     let item = await $publicaciones.findOne({ id, fkUsuario })
 
+    item.etiquetas = JSON.parse(item.etiquetas)
+
     return item
   },
 
