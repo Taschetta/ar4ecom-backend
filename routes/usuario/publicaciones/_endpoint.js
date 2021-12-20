@@ -51,6 +51,8 @@ export default ({ $publicaciones }) => ({
 
     const update = request.body
 
+    update.fkUsuario = query.fkUsuario
+
     if (request.files?.prePublicacion?.[0]) {
       update.prePublicacion = request.files?.prePublicacion?.[0]
     }

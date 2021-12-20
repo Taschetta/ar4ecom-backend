@@ -1,4 +1,5 @@
 import { makeController } from '@packages/controller'
+import { connection as ftp } from '@packages/ftp'
 import fs from 'fs'
 
 export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeController({
@@ -39,22 +40,24 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       'titulo',
       'descripcion',
       'etiquetas',
-      'prePublicacion',
     ],
   },
   format: {
     async clean(item) {
-      if (item.prePublicacion.path) {
-        const path = item.prePublicacion.path
-        item.prePublicacion = JSON.parse(fs.readFileSync(path))
-        fs.unlinkSync(path)
+      if (item.prePublicacion) {
+        if (item.prePublicacion.path) {
+          const path = item.prePublicacion.path
+          item.prePublicacion = JSON.parse(fs.readFileSync(path))
+          fs.unlinkSync(path)
+        }
+
+        item.prePublicacion.titulo = item.titulo
+        item.prePublicacion.descripcion = item.descripcion
+        item.prePublicacion.etiquetas = item.etiquetas
+
+        item.prePublicacion = JSON.stringify(item.prePublicacion)
       }
 
-      item.prePublicacion.titulo = item.titulo
-      item.prePublicacion.descripcion = item.descripcion
-      item.prePublicacion.etiquetas = item.etiquetas
-
-      item.prePublicacion = JSON.stringify(item.prePublicacion)
       item.etiquetas = JSON.stringify(item.etiquetas)
       item.fechaActualizado = new Date(Date.now())
 
@@ -76,7 +79,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
     },
   },
   hooks: {
-    afterInsert({ id, imagenes, bundleAndroid, bundleIOS }) {
+    async afterInsert({ id, imagenes, bundleAndroid, bundleIOS }) {
       fs.mkdirSync(`files/publicaciones/${id}`)
 
       fs.renameSync(bundleAndroid.path, `files/publicaciones/${id}/${id}_android`)
@@ -85,8 +88,10 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       if (imagenes) {
         $imagenes.insertMany(imagenes, { fkPublicacion: id })
       }
+
+      await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
     },
-    afterUpdate({ id, imagenesGuardadas, imagenes, bundleAndroid, bundleIOS }) {
+    async afterUpdate({ id }, { imagenesGuardadas, imagenes, bundleAndroid, bundleIOS }) {
       if (imagenesGuardadas) {
         const imagenes = imagenesGuardadas.map((image) => image.split('/').pop())
         images.removeNotIn(`publicaciones/${id}/imagenes`, imagenes)
@@ -95,7 +100,6 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       // if images are set on the request, save them
 
       if (imagenes) {
-        console.log(imagenesGuardadas)
         images.insertMany(`publicaciones/${id}/imagenes`, imagenes)
       }
 
@@ -110,6 +114,9 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       if (bundleIOS) {
         fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
       }
+
+      await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
+      await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
     },
     afterRemove({ id }) {
       // Remove files

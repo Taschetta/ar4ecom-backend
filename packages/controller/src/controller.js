@@ -36,13 +36,13 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
       const clean = await $format.cleanOne(item)
 
       if (hooks.beforeInsert) {
-        hooks.beforeInsert({ ...item })
+        await hooks.beforeInsert({ ...item })
       }
 
       const id = await $table.insertOne(clean)
 
       if (hooks.afterInsert) {
-        hooks.afterInsert({ ...item, id })
+        await hooks.afterInsert({ ...item, id })
       }
 
       return id
@@ -58,10 +58,10 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
 
       const clean = await $format.cleanOne(update)
 
-      const updated = $table.updateOne({ id: update.id }, clean)
+      const updated = await $table.updateOne(query, clean)
 
       if (hooks.afterUpdate) {
-        hooks.afterUpdate({ ...update })
+        await hooks.afterUpdate(query, { ...update })
       }
 
       return updated
@@ -71,7 +71,7 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
       const result = await $table.removeOne(query)
 
       if (hooks.afterRemove) {
-        hooks.afterRemove(query)
+        await hooks.afterRemove(query)
       }
 
       return result

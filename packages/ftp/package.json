@@ -1,0 +1,11 @@
+{
+  "name": "@packages/ftp",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "main": "node -r dotenv/config index.js"
+  },
+  "dependencies": {
+    "ssh2-sftp-client": "^7.2.1"
+  }
+}
