@@ -20,6 +20,11 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
       let item
 
       item = await $table.findOne(query, options)
+
+      if (!item) {
+        throw new Error('No pudimos encontrar el elemento que estabas buscando')
+      }
+
       item = await $format.fillOne(item)
 
       return item
@@ -29,6 +34,11 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
       $schema.validateOne(item)
 
       const clean = await $format.cleanOne(item)
+
+      if (hooks.beforeInsert) {
+        hooks.beforeInsert({ ...item })
+      }
+
       const id = await $table.insertOne(clean)
 
       if (hooks.afterInsert) {
@@ -39,19 +49,19 @@ export default ({ useTable, useSchema, useFormatter }) => ({ table, schema, form
     },
 
     async updateOne(query, update) {
-      let item
+      // let item
 
-      item = await this.findOne(query)
-      item = { ...item, ...update }
+      // item = await this.findOne(query)
+      // item = { ...item, ...update }
 
-      $schema.validateOne(item)
+      $schema.validateOne(update)
 
-      const clean = await $format.cleanOne(item)
+      const clean = await $format.cleanOne(update)
 
-      const updated = $table.updateOne({ id: item.id }, clean)
+      const updated = $table.updateOne({ id: update.id }, clean)
 
       if (hooks.afterUpdate) {
-        hooks.afterUpdate({ ...item })
+        hooks.afterUpdate({ ...update })
       }
 
       return updated

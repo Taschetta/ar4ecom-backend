@@ -1,5 +1,5 @@
 
-export default ({ $suscripciones }) => ({
+export default ({ $suscripciones, $publicaciones }) => ({
 
   async findMany(request) {
     // Data

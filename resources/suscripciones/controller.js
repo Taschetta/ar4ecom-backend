@@ -1,85 +1,77 @@
+import { makeController } from '@packages/controller'
 
-export default ({ $table, $publicaciones, $usuarios }) => ({
+export default ({ $publicaciones, $usuarios }) => makeController({
+  table: 'suscripcion',
+  schema: {
+    type: 'object',
+    properties: {
+      id: {
+        type: 'integer',
+      },
+      fkUsuario: {
+        type: 'integer',
+      },
+      fkPublicacion: {
+        type: 'integer',
+      },
+      fechaAlta: {
+        type: 'string',
+      },
+      info: {
+        type: 'string',
+        nullable: true,
+      },
+      etiqueta_url: {
+        type: 'string',
+        nullable: true,
+      },
+      url_suscriptor: {
+        type: 'string',
+        nullable: true,
+      },
+      notas: {
+        type: 'string',
+        nullable: true,
+      },
+      publicacion: {
+        type: 'object',
+      },
+      usuario: {
+        type: 'object',
+      },
+    },
+    required: [
+      'fkUsuario',
+      'fkPublicacion',
+    ],
+    additionalProperties: false,
+  },
+  format: {
+    async clean(item) {
 
-  async findMany(query) {
-    // Data
+      item.fechaAlta = item.fechaAlta
+        ? new Date(item.fechaAlta)
+        : new Date(Date.now())
 
-    let items
+      delete item.publicacion
+      delete item.usuario
 
-    // Action
-
-    items = await $table.findMany(query)
-
-    // Format
-
-    items = items.map(async (item) => {
+      return item
+    },
+    async fill(item) {
       item.publicacion = await $publicaciones.findOne({ id: item.fkPublicacion })
       item.usuario = await $usuarios.findOne({ id: item.fkUsuario })
+      item.fechaAlta = new Date(item.fechaAlta)
       return item
-    })
-
-    items = await Promise.all(items)
-
-    return items
+    },
   },
+  hooks: {
+    async beforeInsert({ fkPublicacion }) {
+      const publicacion = await $publicaciones.findOne({ id: fkPublicacion, privado: 0 })
 
-  async findOne(query) {
-    const item = await $table.findOne(query)
-
-    if (!item) {
-      throw new Error('No se encontró la suscripción')
-    }
-
-    item.publicacion = await $publicaciones.findOne({ id: item.fkPublicacion })
-    item.usuario = await $usuarios.findOne({ id: item.fkUsuario })
-
-    return item
+      if (!publicacion) {
+        throw new Error('No se encontró la publicación')
+      }
+    },
   },
-
-  async insertOne({ fkUsuario, fkPublicacion, info, etiqueta_url, url_suscriptor }) {
-    // Auth
-
-    const publicacion = await $publicaciones.findOne({ id: fkPublicacion, privado: 0 })
-
-    if (!publicacion) {
-      throw new Error('No se encontró la publicación')
-    }
-
-    // Action
-
-    return $table.insertOne({
-      fkUsuario,
-      fkPublicacion,
-      info,
-      etiqueta_url,
-      url_suscriptor,
-      fechaAlta: new Date(Date.now()),
-    })
-  },
-
-  async updateOne(query, { info, etiqueta_url, url_suscriptor, notas }) {
-    // Find
-
-    const item = await $table.findOne(query)
-
-    if (!item) {
-      throw new Error('No se encontró la suscripción')
-    }
-
-    // Set update data
-
-    item.info = info
-    item.etiqueta_url = etiqueta_url
-    item.url_suscriptor = url_suscriptor
-    item.notas = notas
-
-    // Action
-
-    return $table.updateOne(query, item)
-  },
-
-  async removeOne(query) {
-    return $table.removeOne(query)
-  },
-
 })
