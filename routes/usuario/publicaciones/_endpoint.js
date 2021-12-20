@@ -20,7 +20,7 @@ export default ({ $publicaciones }) => ({
       return {
         titulo: '',
         descripcion: '',
-        etiquetas: '',
+        etiquetas: [],
         privado: false,
       }
     }

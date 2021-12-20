@@ -58,6 +58,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       item.etiquetas = JSON.stringify(item.etiquetas)
       item.fechaActualizado = new Date(Date.now())
 
+      delete item.imagenesGuardadas
       delete item.bundleAndroid
       delete item.bundleIOS
       delete item.imagenes
@@ -66,7 +67,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       return item
     },
     async fill(item) {
-      item.imagenes = await $imagenes.findMany({ fkPublicacion: item.id })
+      item.imagenesGuardadas = await $imagenes.findMany({ fkPublicacion: item.id })
       item.usuario = await $usuarios.findOne({ id: item.fkUsuario })
       item.etiquetas = JSON.parse(item.etiquetas)
       item.prePublicacion = JSON.parse(item.prePublicacion)
@@ -94,6 +95,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       // if images are set on the request, save them
 
       if (imagenes) {
+        console.log(imagenesGuardadas)
         images.insertMany(`publicaciones/${id}/imagenes`, imagenes)
       }
 
