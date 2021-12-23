@@ -49,7 +49,13 @@ export default ({ $publicaciones }) => ({
     query.id = parseInt(request.params.id)
     query.fkUsuario = parseInt(request.auth.payload.id)
 
-    const update = request.body
+    const item = await $publicaciones.findOne(query)
+
+    if (!item) {
+      throw new Error('No se encontró la publicación')
+    }
+
+    const update = { ...item, ...request.body }
 
     update.fkUsuario = query.fkUsuario
 

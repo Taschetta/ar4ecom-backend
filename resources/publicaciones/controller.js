@@ -32,7 +32,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         type: 'object',
       },
       fechaActualizado: {
-        type: 'string',
+        type: ['string', 'object'],
       },
     },
     required: [
@@ -89,9 +89,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         $imagenes.insertMany(imagenes, { fkPublicacion: id })
       }
 
-      ftp
-        .uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
-        .catch((error) => console.error(error))
+      await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
 
     },
     async afterUpdate({ id }, { imagenesGuardadas, imagenes, bundleAndroid, bundleIOS }) {
@@ -118,16 +116,12 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
       }
 
-      updateFTP()
-        .catch((error) => console.error(error))
-
-      async function updateFTP() {
-        const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
-        if (exists) {
-          await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
-        }
+      const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+      if (exists) {
+        await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
+      }
+      if (fs.existsSync(`files/publicaciones/${id}`)) {
         await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
-
       }
 
     },
@@ -141,14 +135,9 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
       }
 
       // Remove from ftp
-      removeFTP()
-        .catch((error) => console.error(error))
-
-      async function removeFTP() {
-        const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
-        if (exists) {
-          await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
-        }
+      const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+      if (exists) {
+        await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
       }
     },
   },
