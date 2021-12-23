@@ -7,7 +7,9 @@ export default function useAuth({ jwt }, { key, expiration = 3600, algorithm = '
       const jwtKey = options.key || key
       const jwtOptions = {}
 
-      jwtOptions.expiresIn = options.expiration || expiration
+      if (options.expiration !== false) {
+        jwtOptions.expiresIn = options.expiration || expiration
+      }
       jwtOptions.algorithm = options.algorithm || algorithm
 
       return jwt.sign(payload, jwtKey, jwtOptions)

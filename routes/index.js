@@ -1,11 +1,13 @@
 import { useApp } from '@packages/router'
 import express from 'express'
 
+import app from './app/index.js'
 import publicaciones from './publicaciones/index.js'
 import sesion from './sesion/index.js'
 import usuario from './usuario/index.js'
 
 export default useApp({
+  '/app': app,
   '/publicaciones': publicaciones,
   '/sesion': sesion,
   '/usuario': usuario,
