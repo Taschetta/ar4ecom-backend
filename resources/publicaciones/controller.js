@@ -89,7 +89,10 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         $imagenes.insertMany(imagenes, { fkPublicacion: id })
       }
 
-      await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+      ftp
+        .uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+        .catch((error) => console.error(error))
+
     },
     async afterUpdate({ id }, { imagenesGuardadas, imagenes, bundleAndroid, bundleIOS }) {
       if (imagenesGuardadas) {
@@ -115,14 +118,37 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
       }
 
-      await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
-      await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+      updateFTP()
+        .catch((error) => console.error(error))
+
+      async function updateFTP() {
+        const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+        if (exists) {
+          await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
+        }
+        await ftp.uploadDir(`files/publicaciones/${id}`, `/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+
+      }
+
     },
-    afterRemove({ id }) {
+    async afterRemove({ id }) {
       // Remove files
+
       const path = `files/publicaciones/${id}`
+
       if (fs.existsSync(path)) {
         fs.rmSync(path, { recursive: true })
+      }
+
+      // Remove from ftp
+      removeFTP()
+        .catch((error) => console.error(error))
+
+      async function removeFTP() {
+        const exists = await ftp.exists(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`)
+        if (exists) {
+          await ftp.rmdir(`/home/ftp_ar4ecom/ar4ecom.com/Dev/publicaciones/${id}`, true)
+        }
       }
     },
   },
