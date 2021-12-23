@@ -80,7 +80,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
   },
   hooks: {
     async afterInsert({ id, imagenes, bundleAndroid, bundleIOS }) {
-      fs.mkdirSync(`files/publicaciones/${id}`)
+      fs.mkdirSync(`files/publicaciones/${id}`, { recursive: true })
 
       fs.renameSync(bundleAndroid.path, `files/publicaciones/${id}/${id}_android`)
       fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
