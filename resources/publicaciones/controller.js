@@ -32,7 +32,7 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
         type: 'object',
       },
       fechaActualizado: {
-        type: 'object',
+        type: 'string',
       },
     },
     required: [
