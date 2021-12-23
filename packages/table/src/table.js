@@ -2,9 +2,19 @@
 export default ({ connection, builder: build }) => (table) => ({
 
   async query(query = {}) {
-    const sql = build(query)
-    const result = await connection.query(sql)
-    return result[0]
+    try {
+      const sql = build(query)
+      const result = await connection.query(sql)
+      return result[0]
+    } catch (error) {
+      switch (error.code) {
+        case 'ER_ROW_IS_REFERENCED_2':
+          throw new DatabaseError('El campo es utilizado por otra tabla, no se puede eliminar.')
+        default:
+          console.error(error)
+          throw new DatabaseError('Se produjo un error al intentar modificar los datos')
+      }
+    }
   },
 
   async findMany(query = {}, options = {}) {
@@ -145,3 +155,13 @@ export default ({ connection, builder: build }) => (table) => ({
   },
 
 })
+
+class DatabaseError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'DatabaseError'
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, DatabaseError)
+    }
+  }
+}
