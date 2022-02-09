@@ -25,8 +25,8 @@ export default ({ auth, hash, sesiones, usuarios }) => ({
       throw new BadRequestError('La contraseña es incorrecta')
     }
 
-    const accessToken = auth.generate({ id: usuario.id, type: 'access' }, { expiration: 900 })
-    const refreshToken = auth.generate({ id: usuario.id, type: 'refresh' }, { expiration: 3600 })
+    const accessToken = auth.generate({ id: usuario.id, type: 'access' }, { expiration: 3600 })
+    const refreshToken = auth.generate({ id: usuario.id, type: 'refresh' }, { expiration: 6000 })
 
     await sesiones.removeMany({ fkusuario: usuario.id })
     await sesiones.insertOne({ fkusuario: usuario.id, token: refreshToken })
@@ -70,8 +70,8 @@ export default ({ auth, hash, sesiones, usuarios }) => ({
 
     delete usuario.contraseña
 
-    const accessToken = auth.generate({ id: payload.id, type: 'access' }, { expiration: 900 })
-    const refreshToken = auth.generate({ id: payload.id, type: 'refresh' }, { expiration: 3600 })
+    const accessToken = auth.generate({ id: payload.id, type: 'access' }, { expiration: 3600 })
+    const refreshToken = auth.generate({ id: payload.id, type: 'refresh' }, { expiration: 6000 })
 
     await sesiones.removeMany({ fkusuario: payload.id })
     await sesiones.insertOne({ fkusuario: payload.id, token: refreshToken })
