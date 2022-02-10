@@ -82,8 +82,8 @@ export const usePublicaciones = ({ $imagenes, $usuarios, images }) => makeContro
     async afterInsert({ id, imagenes, bundleAndroid, bundleIOS }) {
       fs.mkdirSync(`files/publicaciones/${id}`, { recursive: true })
 
-      fs.renameSync(bundleAndroid.path, `files/publicaciones/${id}/${id}_android`)
-      fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
+      if (bundleAndroid) fs.renameSync(bundleAndroid.path, `files/publicaciones/${id}/${id}_android`)
+      if (bundleIOS) fs.renameSync(bundleIOS.path, `files/publicaciones/${id}/${id}_ios`)
 
       if (imagenes) {
         $imagenes.insertMany(imagenes, { fkPublicacion: id })

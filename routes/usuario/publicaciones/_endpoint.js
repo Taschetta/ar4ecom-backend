@@ -34,8 +34,8 @@ export default ({ $publicaciones }) => ({
 
     item.fkUsuario = request.auth.payload.id
     item.prePublicacion = request.files.prePublicacion[0]
-    item.bundleAndroid = request.files.bundleAndroid[0]
-    item.bundleIOS = request.files.bundleIOS[0]
+    item.bundleAndroid = request.files.bundleAndroid?.[0]
+    item.bundleIOS = request.files.bundleIOS?.[0]
     item.imagenes = request.files.imagenes
 
     const id = await $publicaciones.insertOne(item)
