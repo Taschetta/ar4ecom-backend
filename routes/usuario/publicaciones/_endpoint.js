@@ -37,6 +37,7 @@ export default ({ $publicaciones }) => ({
     item.bundleAndroid = request.files.bundleAndroid?.[0]
     item.bundleIOS = request.files.bundleIOS?.[0]
     item.imagenes = request.files.imagenes
+    item.privado = false
 
     const id = await $publicaciones.insertOne(item)
 
