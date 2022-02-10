@@ -3,17 +3,17 @@ import { UnauthorizedError, BadRequestError } from '../_errors.js'
 export default ({ auth, hash, sesiones, usuarios }) => ({
 
   async login(request) {
-    const { nombre, contraseña } = request.body
+    const { email, contraseña } = request.body
 
-    if (!nombre) {
-      throw new BadRequestError('Falta el nombre de usuario')
+    if (!email) {
+      throw new BadRequestError('Falta el mail')
     }
 
     if (!contraseña) {
       throw new BadRequestError('Falta la contraseña')
     }
 
-    const usuario = await usuarios.findOne({ nombre })
+    const usuario = await usuarios.findOne({ email })
 
     if (!usuario) {
       throw new BadRequestError('No hay ningun usuario con este nombre')
